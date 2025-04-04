@@ -16,7 +16,7 @@ export class Main {
   }
 
   setupEventListeners() {
-    this.button.addEventListener('click', () => this.handleButtonClick());
+    this.button.addEventListener('click', this.handleButtonClick.bind(this));
   }
 
   handleButtonClick() {

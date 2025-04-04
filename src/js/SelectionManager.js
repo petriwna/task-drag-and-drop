@@ -11,9 +11,9 @@ export class SelectionManager {
   }
 
   setupEventListeners() {
-    this.container.addEventListener('mousedown', (event) => this.handleMouseDown(event));
-    document.addEventListener('mousemove', (event) => this.handleMouseMove(event));
-    document.addEventListener('mouseup', (event) => this.handleMouseUp(event));
+    this.container.addEventListener('mousedown', this.handleMouseDown.bind(this));
+    document.addEventListener('mousemove', this.handleMouseMove.bind(this));
+    document.addEventListener('mouseup', this.handleMouseUp.bind(this));
   }
 
   handleMouseDown(event) {
