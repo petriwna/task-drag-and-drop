@@ -1,0 +1,7 @@
+.result {
+    width: 90%;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: var(--color-white);
+    border-radius: 10px;
+}

@@ -1,0 +1,4 @@
+.letter__selected {
+    color: var(--color-red);
+    cursor: move;
+}

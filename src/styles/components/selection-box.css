@@ -1,0 +1,6 @@
+.selection-box {
+    position: absolute;
+    border: 1px dashed #000;
+    background-color: rgba(0, 0, 255, 0.2);
+    pointer-events: none;
+}

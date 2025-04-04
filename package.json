@@ -1,0 +1,48 @@
+{
+  "name": "test_string",
+  "version": "1.0.0",
+  "author": "Nataliia Sychevska",
+  "main": "src/js/index.js",
+  "scripts": {
+    "start": "webpack serve",
+    "build": "cross-env NODE_ENV=development webpack",
+    "build:prod": "cross-env NODE_ENV=production webpack",
+    "build:analyze": "cross-env NODE_ENV=production webpack --analyze",
+    "deploy": "gh-pages -d dist",
+    "clear": "yarn cmd clean"
+  },
+  "dependencies": {
+    "cross-env": "^7.0.3",
+    "gh-pages": "^6.3.0"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.27.0",
+    "@babel/core": "^7.26.10",
+    "@babel/plugin-proposal-class-properties": "^7.18.6",
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+    "@babel/plugin-transform-modules-amd": "^7.25.9",
+    "@babel/preset-env": "^7.26.9",
+    "babel-loader": "^10.0.0",
+    "clean-webpack-plugin": "^4.0.0",
+    "css-loader": "^7.1.2",
+    "eslint": "^9.23.0",
+    "eslint-config-prettier": "^10.1.1",
+    "eslint-plugin-html": "^8.1.2",
+    "eslint-plugin-import": "^2.31.0",
+    "eslint-plugin-prettier": "^5.2.6",
+    "html-webpack-plugin": "^5.6.3",
+    "mini-css-extract-plugin": "^2.9.2",
+    "path": "^0.12.7",
+    "postcss-loader": "^8.1.1",
+    "prettier": "^3.5.3",
+    "style-loader": "^4.0.0",
+    "webpack": "^5.98.0",
+    "webpack-bundle-analyzer": "^4.10.2",
+    "webpack-cli": "^6.0.1",
+    "webpack-dev-server": "^5.2.1",
+    "webpack-manifest-plugin": "^5.0.1"
+  },
+  "presets": [
+    "@babel/preset-env"
+  ]
+}
