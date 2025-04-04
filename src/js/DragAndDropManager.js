@@ -60,12 +60,10 @@ export class DragAndDropManager {
 
     let dropTarget = document.elementFromPoint(event.clientX, event.clientY);
 
-    // Шукаємо найближчий елемент .letter
     while (dropTarget && dropTarget !== document.body && !dropTarget.classList.contains('letter')) {
       dropTarget = dropTarget.parentNode;
     }
 
-    // Перевіряємо, чи ми знайшли правильний елемент
     if (!dropTarget || dropTarget.classList.contains('dragging')) return;
 
     const parent = dropTarget.parentNode;
@@ -75,7 +73,6 @@ export class DragAndDropManager {
       return;
     }
 
-    // Додаємо курсор перед dropTarget
     if (!this.cursor.parentNode) {
       parent.insertBefore(this.cursor, dropTarget);
     } else if (this.cursor.nextSibling !== dropTarget) {
