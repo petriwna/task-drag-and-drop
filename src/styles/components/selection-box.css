@@ -22,6 +22,5 @@
 
 .dropped-outside {
     position: absolute;
-    cursor: grab;
-    user-select: none;
+    padding: 10px;
 }

@@ -11,9 +11,9 @@ export class SelectionManager {
   }
 
   setupEventListeners() {
-    this.container.addEventListener('mousedown', this.handleMouseDown.bind(this));
-    document.addEventListener('mousemove', this.handleMouseMove.bind(this));
-    document.addEventListener('mouseup', this.handleMouseUp.bind(this));
+    document.body.addEventListener('mousedown', this.handleMouseDown.bind(this));
+    document.body.addEventListener('mousemove', this.handleMouseMove.bind(this));
+    document.body.addEventListener('mouseup', this.handleMouseUp.bind(this));
   }
 
   handleMouseDown(event) {
@@ -32,9 +32,11 @@ export class SelectionManager {
     if (existing) {
       this.selectedLetters = this.selectedLetters.filter((item) => item.index !== letterIndex);
       letter.classList.remove('letter__selected');
+      letter.removeAttribute('draggable');
     } else {
       this.selectedLetters.push({ text: letter.innerText, index: letterIndex, element: letter });
       letter.classList.add('letter__selected');
+      letter.setAttribute('draggable', 'true');
     }
   }
 
@@ -90,6 +92,7 @@ export class SelectionManager {
       if (isInside) {
         if (!this.selectedLetters.some((item) => item.index === letterIndex)) {
           letter.classList.add('letter__selected');
+          letter.setAttribute('draggable', 'true');
           this.selectedLetters.push({
             text: letter.innerText,
             index: letterIndex,
@@ -98,6 +101,7 @@ export class SelectionManager {
         }
       } else {
         letter.classList.remove('letter__selected');
+        letter.removeAttribute('draggable');
         this.selectedLetters = this.selectedLetters.filter((item) => item.index !== letterIndex);
       }
     });

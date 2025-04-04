@@ -12,10 +12,10 @@ export class DragAndDropManager {
   }
 
   setupEventListeners() {
-    this.container.addEventListener('dragstart', this.handleDragStart.bind(this));
-    this.container.addEventListener('dragover', this.handleDragOver.bind(this));
-    this.container.addEventListener('drop', this.handleDrop.bind(this));
-    this.container.addEventListener('dragend', this.handleDragEnd.bind(this));
+    document.body.addEventListener('dragstart', this.handleDragStart.bind(this));
+    document.body.addEventListener('dragover', this.handleDragOver.bind(this));
+    document.body.addEventListener('drop', this.handleDrop.bind(this));
+    document.body.addEventListener('dragend', this.handleDragEnd.bind(this));
   }
 
   handleDragStart(event) {
@@ -59,9 +59,24 @@ export class DragAndDropManager {
     if (!dropTarget || dropTarget.classList.contains('dragging')) return;
 
     const parent = dropTarget.parentNode;
-    this.draggedLetters.forEach(({ element }) => {
-      parent.insertBefore(element, this.cursorManager.getCursor());
-    });
+    if (parent.classList.contains('result')) {
+      this.draggedLetters.forEach(({ element }) => {
+        parent.insertBefore(element, this.cursorManager.getCursor());
+      });
+    } else {
+      const div = document.createElement('div');
+      div.classList.add('dropped-outside');
+
+      this.draggedLetters.forEach(({ element }) => {
+        const rect = element.getBoundingClientRect();
+        div.style.left = `${event.clientX - rect.width / 2}px`;
+        div.style.top = `${event.clientY - rect.height / 2}px`;
+        element.removeAttribute('draggable');
+
+        div.appendChild(element);
+      });
+      document.body.appendChild(div);
+    }
 
     this.cleanup();
   }
@@ -71,7 +86,7 @@ export class DragAndDropManager {
   }
 
   cleanup() {
-    this.container.querySelectorAll('.dragging').forEach((el) => el.classList.remove('dragging'));
+    document.querySelectorAll('.dragging').forEach((el) => el.classList.remove('dragging'));
 
     this.cursorManager.remove();
     this.selectedLettersManager.clearSelection();

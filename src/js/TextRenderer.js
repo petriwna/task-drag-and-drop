@@ -18,7 +18,6 @@ export class TextRenderer {
     span.innerText = char;
     span.classList.add('letter');
     span.dataset.index = index;
-    span.setAttribute('draggable', 'true');
     return span;
   }
 
