@@ -39,7 +39,6 @@ export class SelectionManager {
   }
 
   startSelectionBox(event) {
-    this.clearSelection();
     this.selectionBox = document.createElement('div');
     this.selectionBox.classList.add('selection-box');
     document.body.appendChild(this.selectionBox);
