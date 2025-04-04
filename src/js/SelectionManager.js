@@ -11,105 +11,109 @@ export class SelectionManager {
   }
 
   setupEventListeners() {
-    this.container.addEventListener('mousedown', (event) => this.startSelection(event));
-    document.addEventListener('mousemove', (event) => this.drawSelectionBox(event));
-    document.addEventListener('mouseup', (event) => this.stopSelection(event));
+    this.container.addEventListener('mousedown', (event) => this.handleMouseDown(event));
+    document.addEventListener('mousemove', (event) => this.handleMouseMove(event));
+    document.addEventListener('mouseup', (event) => this.handleMouseUp(event));
   }
 
-  startSelection(event) {
+  handleMouseDown(event) {
     if (event.ctrlKey || event.metaKey) {
       this.toggleLetterSelection(event.target);
-      this.createSelectionBox(event);
+      this.startSelectionBox(event);
     }
   }
 
   toggleLetterSelection(letter) {
     if (!letter.classList.contains('letter')) return;
 
-    const letterText = letter.innerText;
-    const letterIndex = Array.from(letter.parentNode.children).indexOf(letter);
+    const letterIndex = this.getLetterIndex(letter);
+    const existing = this.selectedLetters.find((item) => item.index === letterIndex);
 
-    letter.classList.toggle('letter__selected');
-
-    if (letter.classList.contains('letter__selected')) {
-      this.selectedLetters.push({ text: letterText, index: letterIndex, element: letter });
+    if (existing) {
+      this.selectedLetters = this.selectedLetters.filter((item) => item.index !== letterIndex);
+      letter.classList.remove('letter__selected');
     } else {
-      this.selectedLetters = this.selectedLetters.filter(
-        (item) => !(item.text === letterText && item.index === letterIndex),
-      );
+      this.selectedLetters.push({ text: letter.innerText, index: letterIndex, element: letter });
+      letter.classList.add('letter__selected');
     }
   }
 
-  clearSelection() {
-    this.selectedLetters.forEach((letter) => {
-      setTimeout(() => {
-        letter.element.classList.remove('letter__selected');
-      }, 100);
-    });
-
-    this.selectedLetters = [];
-  }
-
-  drawSelectionBox(event) {
-    if (!this.selectionBox) return;
-    const width = event.clientX - this.startX;
-    const height = event.clientY - this.startY;
-    this.selectionBox.style.width = `${Math.abs(width)}px`;
-    this.selectionBox.style.height = `${Math.abs(height)}px`;
-    this.selectionBox.style.left = `${Math.min(event.clientX, this.startX)}px`;
-    this.selectionBox.style.top = `${Math.min(event.clientY, this.startY)}px`;
-    this.updateLetterSelection();
-  }
-
-  createSelectionBox(event) {
+  startSelectionBox(event) {
+    this.clearSelection();
     this.selectionBox = document.createElement('div');
     this.selectionBox.classList.add('selection-box');
     document.body.appendChild(this.selectionBox);
+
     this.startX = event.clientX;
     this.startY = event.clientY;
-    this.selectionBox.style.left = `${this.startX}px`;
-    this.selectionBox.style.top = `${this.startY}px`;
+
+    this.updateSelectionBoxPosition(event);
   }
 
-  updateLetterSelection() {
-    const rect = this.selectionBox.getBoundingClientRect();
-
-    document.querySelectorAll('.letter').forEach((letter) => {
-      const letterText = letter.innerText;
-      const letterIndex = Array.from(letter.parentNode.children).indexOf(letter);
-
-      const letterRect = letter.getBoundingClientRect();
-      const isInside =
-        letterRect.left >= rect.left &&
-        letterRect.right <= rect.right &&
-        letterRect.top >= rect.top &&
-        letterRect.bottom <= rect.bottom;
-      if (isInside) {
-        if (
-          !this.selectedLetters.some(
-            (item) => item.text === letterText && item.index === letterIndex,
-          )
-        ) {
-          letter.classList.add('letter__selected');
-          this.selectedLetters.push({ text: letterText, index: letterIndex, element: letter });
-        }
-      } else {
-        this.selectedLetters = this.selectedLetters.filter(
-          (item) => !(item.text === letterText && item.index === letterIndex),
-        );
-        letter.classList.remove('letter__selected');
-      }
-    });
+  handleMouseMove(event) {
+    if (!this.selectionBox) return;
+    this.updateSelectionBoxPosition(event);
+    this.updateLetterSelection();
   }
 
-  stopSelection() {
+  handleMouseUp() {
     if (this.selectionBox) {
       document.body.removeChild(this.selectionBox);
       this.selectionBox = null;
     }
   }
 
+  updateSelectionBoxPosition(event) {
+    const width = event.clientX - this.startX;
+    const height = event.clientY - this.startY;
+
+    Object.assign(this.selectionBox.style, {
+      width: `${Math.abs(width)}px`,
+      height: `${Math.abs(height)}px`,
+      left: `${Math.min(event.clientX, this.startX)}px`,
+      top: `${Math.min(event.clientY, this.startY)}px`,
+    });
+  }
+
+  updateLetterSelection() {
+    const rect = this.selectionBox.getBoundingClientRect();
+
+    this.container.querySelectorAll('.letter').forEach((letter) => {
+      const letterIndex = this.getLetterIndex(letter);
+      const letterRect = letter.getBoundingClientRect();
+
+      const isInside =
+        letterRect.left >= rect.left &&
+        letterRect.right <= rect.right &&
+        letterRect.top >= rect.top &&
+        letterRect.bottom <= rect.bottom;
+
+      if (isInside) {
+        if (!this.selectedLetters.some((item) => item.index === letterIndex)) {
+          letter.classList.add('letter__selected');
+          this.selectedLetters.push({
+            text: letter.innerText,
+            index: letterIndex,
+            element: letter,
+          });
+        }
+      } else {
+        letter.classList.remove('letter__selected');
+        this.selectedLetters = this.selectedLetters.filter((item) => item.index !== letterIndex);
+      }
+    });
+  }
+
+  getLetterIndex(letter) {
+    return parseInt(letter.dataset.index, 10);
+  }
+
+  clearSelection() {
+    this.selectedLetters.forEach(({ element }) => element.classList.remove('letter__selected'));
+    this.selectedLetters = [];
+  }
+
   getSelectedLetters() {
-    return this.selectedLetters;
+    return [...this.selectedLetters];
   }
 }
