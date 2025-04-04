@@ -17,28 +17,10 @@ export class Main {
 
   setupEventListeners() {
     this.button.addEventListener('click', () => this.handleButtonClick());
-
-    // this.resultContainer.addEventListener('dragstart', (event) => {
-    //   event.dataTransfer.setData('application/my-app', event.target.id);
-    //   event.dataTransfer.effectAllowed = 'move';
-    //   console.log('start', event);
-    // });
-    //
-    // this.resultContainer.addEventListener('dragover', (event) => {
-    //   event.preventDefault();
-    //   console.log('over', event);
-    // });
-    //
-    // this.resultContainer.addEventListener('drop', (event) => {
-    //   event.preventDefault();
-    //   console.log('drop', event);
-    // });
   }
 
   handleButtonClick() {
     this.textRenderer.render(this.textarea.value);
     this.textarea.value = '';
-
-    // this.selectionManager.clearSelection();
   }
 }

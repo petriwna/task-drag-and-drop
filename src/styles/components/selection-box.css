@@ -4,3 +4,24 @@
     background-color: rgba(0, 0, 255, 0.2);
     pointer-events: none;
 }
+
+.text-cursor {
+    position: absolute;
+    display: inline-block;
+    width: 1px;
+    height: 1em;
+    background: black;
+    vertical-align: middle;
+    animation: blink 0.8s infinite;
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
+
+.dropped-outside {
+    position: absolute;
+    cursor: grab;
+    user-select: none;
+}

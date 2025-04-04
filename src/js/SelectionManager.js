@@ -42,8 +42,11 @@ export class SelectionManager {
 
   clearSelection() {
     this.selectedLetters.forEach((letter) => {
-      letter.element.classList.remove('letter__selected');
+      setTimeout(() => {
+        letter.element.classList.remove('letter__selected');
+      }, 100);
     });
+
     this.selectedLetters = [];
   }
 

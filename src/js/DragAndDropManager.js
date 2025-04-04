@@ -3,6 +3,9 @@ export class DragAndDropManager {
     this.container = resultContainer;
     this.selectedLetters = selectedLetters;
     this.draggedLetters = [];
+    this.cursor = document.createElement('span');
+    this.cursor.classList.add('text-cursor');
+    this.isDragging = false;
 
     this.setupEventListeners();
   }
@@ -47,45 +50,70 @@ export class DragAndDropManager {
     this.draggedLetters.forEach(({ element }) => {
       element.classList.add('dragging');
     });
+
+    this.isDragging = true;
   }
 
   handleDragOver(event) {
     event.preventDefault();
     event.dataTransfer.dropEffect = 'move';
 
-    const dropTarget = document.elementFromPoint(event.clientX, event.clientY);
-    if (dropTarget && dropTarget.classList.contains('letter')) {
-      dropTarget.classList.add('highlight'); // Підсвічує цільовий елемент
+    let dropTarget = document.elementFromPoint(event.clientX, event.clientY);
+
+    // Шукаємо найближчий елемент .letter
+    while (dropTarget && dropTarget !== document.body && !dropTarget.classList.contains('letter')) {
+      dropTarget = dropTarget.parentNode;
+    }
+
+    // Перевіряємо, чи ми знайшли правильний елемент
+    if (!dropTarget || dropTarget.classList.contains('dragging')) return;
+
+    const parent = dropTarget.parentNode;
+
+    if (!parent || typeof parent.insertBefore !== 'function') {
+      console.warn('Invalid parent for insertBefore:', parent);
+      return;
+    }
+
+    // Додаємо курсор перед dropTarget
+    if (!this.cursor.parentNode) {
+      parent.insertBefore(this.cursor, dropTarget);
+    } else if (this.cursor.nextSibling !== dropTarget) {
+      parent.insertBefore(this.cursor, dropTarget);
     }
   }
 
   handleDrop(event) {
     let dropTarget = document.elementFromPoint(event.clientX, event.clientY);
-
     while (dropTarget && !dropTarget.classList.contains('letter')) {
       dropTarget = dropTarget.parentNode;
     }
 
-    if (!dropTarget || !dropTarget.parentNode) return;
+    if (!dropTarget || dropTarget.classList.contains('dragging')) return;
 
     const parent = dropTarget.parentNode;
 
     this.draggedLetters.forEach(({ element }) => {
-      parent.insertBefore(element, dropTarget.nextSibling);
-      dropTarget = element;
+      parent.insertBefore(element, this.cursor);
     });
 
-    this.draggedLetters = [];
-    this.selectedLetters.clearSelection();
+    this.cleanup();
   }
 
   handleDragEnd() {
+    this.cleanup();
+  }
+
+  cleanup() {
     document.querySelectorAll('.dragging').forEach((el) => {
       el.classList.remove('dragging');
     });
 
-    document.querySelectorAll('.highlight').forEach((el) => {
-      el.classList.remove('highlight');
-    });
+    if (this.cursor.parentNode) {
+      this.cursor.parentNode.removeChild(this.cursor);
+    }
+
+    this.isDragging = false;
+    this.selectedLetters.clearSelection();
   }
 }
