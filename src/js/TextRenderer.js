@@ -1,11 +1,14 @@
 export class TextRenderer {
-  constructor(container) {
+  constructor(container, messageElement) {
     this.container = container;
+    this.messageElement = messageElement;
   }
 
   render(value) {
     this.clear();
     if (!value.trim()) return;
+    this.messageElement.textContent =
+      'Press Ctrl (or Cmd on Mac) + click to multi-select or Ctrl (or Cmd on Mac) + drag to group select.';
 
     this.container.classList.remove('visually-hidden');
     value.split('').forEach((char, index) => {
@@ -24,5 +27,10 @@ export class TextRenderer {
   clear() {
     this.container.innerHTML = '';
     this.container.classList.add('visually-hidden');
+    this.messageElement.textContent = 'Enter text and click the "Display" button.';
+
+    document.querySelectorAll('.dropped-outside').forEach((el) => {
+      el.remove();
+    });
   }
 }

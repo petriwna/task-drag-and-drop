@@ -12,7 +12,7 @@ export class Main {
 
     this.setupEventListeners();
 
-    this.textRenderer = new TextRenderer(this.resultContainer);
+    this.textRenderer = new TextRenderer(this.resultContainer, this.message);
     this.selectionManager = new SelectionManager(this.resultContainer, this.message);
     new DragAndDropManager(this.resultContainer, this.selectionManager, this.message);
   }
@@ -24,7 +24,5 @@ export class Main {
   handleButtonClick() {
     this.textRenderer.render(this.textarea.value);
     this.textarea.value = '';
-    this.message.textContent =
-      'Press Ctrl (or Cmd on Mac) + click to multi-select or Ctrl (or Cmd on Mac) + drag to group select.';
   }
 }

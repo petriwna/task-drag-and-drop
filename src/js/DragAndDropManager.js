@@ -29,7 +29,7 @@ export class DragAndDropManager {
 
     this.draggedLetters = selected
       .map(({ index }) => {
-        const element = this.container.querySelector(`.letter[data-index="${index}"]`);
+        const element = document.querySelector(`.letter[data-index="${index}"]`);
         return element ? { index, element } : null;
       })
       .filter(Boolean)
@@ -63,10 +63,28 @@ export class DragAndDropManager {
     if (!dropTarget || dropTarget.classList.contains('dragging')) return;
 
     const parent = dropTarget.parentNode;
-    if (parent.classList.contains('result')) {
-      this.draggedLetters.forEach(({ element }) => {
-        parent.insertBefore(element, this.cursorManager.getCursor());
-      });
+    if (parent.classList.contains('result') || parent.classList.contains('dropped-outside')) {
+      if (this.draggedLetters.length === 1) {
+        const draggedElement = this.draggedLetters[0].element;
+
+        if (dropTarget !== draggedElement) {
+          const draggedParent = draggedElement.parentNode;
+          const dropParent = dropTarget.parentNode;
+
+          const draggedPlaceholder = document.createElement('span');
+          const dropPlaceholder = document.createElement('span');
+
+          draggedParent.replaceChild(draggedPlaceholder, draggedElement);
+          dropParent.replaceChild(dropPlaceholder, dropTarget);
+
+          dropParent.replaceChild(draggedElement, dropPlaceholder);
+          draggedParent.replaceChild(dropTarget, draggedPlaceholder);
+        }
+      } else {
+        this.draggedLetters.forEach(({ element }) => {
+          parent.insertBefore(element, this.cursorManager.getCursor());
+        });
+      }
     } else {
       const div = document.createElement('div');
       div.classList.add('dropped-outside');

@@ -3,6 +3,6 @@
 }
 
 .letter__selected {
-    color: var(--color-red);
+    color: var(--color-selected);
     cursor: move;
 }

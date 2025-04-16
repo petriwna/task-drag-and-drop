@@ -84,7 +84,7 @@ export class SelectionManager {
   updateLetterSelection() {
     const rect = this.selectionBox.getBoundingClientRect();
 
-    this.container.querySelectorAll('.letter').forEach((letter) => {
+    document.querySelectorAll('.letter').forEach((letter) => {
       const letterIndex = this.getLetterIndex(letter);
       const letterRect = letter.getBoundingClientRect();
 
