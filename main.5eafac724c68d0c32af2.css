@@ -1,0 +1,176 @@
+*,
+*::after,
+*::before {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    color: var(--color-primary-dark);
+    font-size: 16px;
+    font-weight: 300;
+    line-height: 1.5;
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+    margin-top: 0;
+}
+
+main {
+    display: flex;
+    flex-direction: column;
+}
+
+.visually-hidden {
+    position: absolute;
+    left: -10000px;
+    top: auto;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+}
+
+.text-brand {
+    color: var(--color-brand-normal);
+}
+
+.text-bold {
+    font-weight: 600;
+}
+
+:root {
+    --color-primary-light: #f9f9f9;
+    --color-primary-dark: #31261a;
+    --color-brand-normal: #819b57;
+    --color-brand-dark: #465929;
+    --color-secondary-dark: #a18268;
+    --color-brand-light: #cfcfbc;
+
+    --color-white: #ffffff;
+    --color-selected: #3c7bed;
+}
+
+.button {
+    display: block;
+    padding: 10px 24px;
+    color: var(--color-primary-light);
+    background-color: var(--color-brand-normal);
+    border: 2px solid var(--color-brand-normal);
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+
+    &:hover {
+        color: var(--color-brand-dark);
+        background: transparent;
+    }
+}
+
+.input {
+    position: relative;
+    width: 50%;
+}
+
+.input__label {
+    position: absolute;
+    top: 16px;
+    left: 42px;
+}
+
+.input__control {
+    padding: 8px 24px;
+    width: 100%;
+    font-size: 16px;
+    line-height: 1.17;
+    border-radius: 8px;
+    border: 1px solid var(--color-secondary-dark);
+    background-color: transparent;
+
+    &:focus {
+        border-color: var(--color-brand-normal);
+        outline: none;
+    }
+
+    &::placeholder {
+        color: var(--color-secondary-dark);
+        font-size: 16px;
+        line-height: 1.17;
+    }
+
+    &:focus::placeholder {
+        color: var(--color-primary-dark);
+    }
+}
+
+.letter {
+    user-select: none;
+}
+
+.letter__selected {
+    color: var(--color-selected);
+    cursor: move;
+}
+
+.selection-box {
+    position: absolute;
+    border: 1px dashed #000;
+    background-color: rgba(0, 0, 255, 0.2);
+    pointer-events: none;
+}
+
+.text-cursor {
+    position: absolute;
+    display: inline-block;
+    width: 1px;
+    height: 1em;
+    background: black;
+    vertical-align: middle;
+    animation: blink 0.8s infinite;
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
+
+.dropped-outside {
+    position: absolute;
+    padding: 10px;
+}
+
+.container {
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 24px;
+    height: 100vh;
+    background-color: var(--color-primary-light);
+}
+
+.form {
+    display: flex;
+    margin: 50px 0;
+    gap: 20px;
+    align-items: center;
+    justify-content: center;
+}
+
+.result {
+    padding: 10px;
+}
+
+
+
+
+/*# sourceMappingURL=main.5eafac724c68d0c32af2.css.map*/
