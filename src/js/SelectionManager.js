@@ -1,7 +1,5 @@
 export class SelectionManager {
-  constructor(resultContainer, messageElement) {
-    this.container = resultContainer;
-
+  constructor(messageElement) {
     this.selectedLetters = [];
     this.selectionBox = null;
     this.startX = 0;

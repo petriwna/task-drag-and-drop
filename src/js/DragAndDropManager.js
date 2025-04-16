@@ -1,13 +1,12 @@
 import { CursorManager } from './CursorManager';
 
 export class DragAndDropManager {
-  constructor(resultContainer, selectedLettersManager, messageElement) {
-    this.container = resultContainer;
-    this.selectedLettersManager = selectedLettersManager;
+  constructor(selectionManager, messageElement) {
+    this.selectionManager = selectionManager;
     this.messageElement = messageElement;
+    this.cursorManager = new CursorManager();
 
     this.draggedLetters = [];
-    this.cursorManager = new CursorManager();
 
     this.setupEventListeners();
   }
@@ -20,27 +19,22 @@ export class DragAndDropManager {
   }
 
   handleDragStart(event) {
-    if (!event?.target?.classList?.contains('letter__selected')) {
+    const selected = this.selectionManager.getSelectedLetters();
+
+    if (selected.length === 0 || !event.target.classList.contains('letter__selected')) {
       this.messageElement.textContent =
         'To select, press Ctrl (or Cmd on Mac) + click to multi-select or Ctrl (or Cmd on Mac) + drag to group select.';
+
+      return;
     }
 
-    const selected = this.selectedLettersManager.getSelectedLetters();
-
     this.draggedLetters = selected
-      .map(({ index }) => {
-        const element = document.querySelector(`.letter[data-index="${index}"]`);
-        return element ? { index, element } : null;
-      })
-      .filter(Boolean)
-      .sort((a, b) => a.index - b.index);
+      .map(({ element }) => ({ element }))
+      .sort((a, b) => {
+        return parseInt(a.element.dataset.index) - parseInt(b.element.dataset.index);
+      });
 
-    if (this.draggedLetters.length === 0) return;
-
-    event.dataTransfer.setData(
-      'text/plain',
-      JSON.stringify(this.draggedLetters.map(({ index }) => index)),
-    );
+    event.dataTransfer.setData('text/plain', '');
     event.dataTransfer.effectAllowed = 'move';
 
     this.draggedLetters.forEach(({ element }) => element.classList.add('dragging'));
@@ -48,12 +42,11 @@ export class DragAndDropManager {
 
   handleDragOver(event) {
     event.preventDefault();
-    event.dataTransfer.dropEffect = 'move';
 
     const dropTarget = this.findLetterFromPoint(event.clientX, event.clientY);
-    if (!dropTarget || dropTarget.classList.contains('dragging')) return;
-
-    this.cursorManager.placeBefore(dropTarget);
+    if (dropTarget && !dropTarget.classList.contains('dragging')) {
+      this.cursorManager.placeBefore(dropTarget);
+    }
   }
 
   handleDrop(event) {
@@ -63,23 +56,11 @@ export class DragAndDropManager {
     if (!dropTarget || dropTarget.classList.contains('dragging')) return;
 
     const parent = dropTarget.parentNode;
+    if (!parent || !this.draggedLetters.length) return;
+
     if (parent.classList.contains('result') || parent.classList.contains('dropped-outside')) {
       if (this.draggedLetters.length === 1) {
-        const draggedElement = this.draggedLetters[0].element;
-
-        if (dropTarget !== draggedElement) {
-          const draggedParent = draggedElement.parentNode;
-          const dropParent = dropTarget.parentNode;
-
-          const draggedPlaceholder = document.createElement('span');
-          const dropPlaceholder = document.createElement('span');
-
-          draggedParent.replaceChild(draggedPlaceholder, draggedElement);
-          dropParent.replaceChild(dropPlaceholder, dropTarget);
-
-          dropParent.replaceChild(draggedElement, dropPlaceholder);
-          draggedParent.replaceChild(dropTarget, draggedPlaceholder);
-        }
+        this.swapLetters(dropTarget, this.draggedLetters[0].element);
       } else {
         this.draggedLetters.forEach(({ element }) => {
           parent.insertBefore(element, this.cursorManager.getCursor());
@@ -103,20 +84,36 @@ export class DragAndDropManager {
     this.cleanup();
   }
 
+  swapLetters(letterA, letterB) {
+    if (letterA === letterB) return;
+
+    const parentA = letterA.parentNode;
+    const parentB = letterB.parentNode;
+
+    const placeholderA = document.createElement('span');
+    const placeholderB = document.createElement('span');
+
+    parentA.replaceChild(placeholderA, letterA);
+    parentB.replaceChild(placeholderB, letterB);
+
+    parentA.replaceChild(letterB, placeholderA);
+    parentB.replaceChild(letterA, placeholderB);
+  }
+
   handleDragEnd() {
     this.cleanup();
   }
 
   cleanup() {
     document.querySelectorAll('.dragging').forEach((el) => el.classList.remove('dragging'));
-
     this.cursorManager.remove();
-    this.selectedLettersManager.clearSelection();
+    this.selectionManager.clearSelection();
+    this.draggedLetters = [];
   }
 
   findLetterFromPoint(x, y) {
     let el = document.elementFromPoint(x, y);
-    while (el && el !== document.body && !el.classList.contains('letter')) {
+    while (el && !el.classList.contains('letter') && el !== document.body) {
       el = el.parentNode;
     }
     return el;

@@ -8,13 +8,17 @@ export class Main {
     this.textarea = document.querySelector('.input__control');
     this.resultContainer = document.querySelector('.result');
     this.message = document.querySelector('.message__text');
-    this.message.textContent = 'Enter text and click the "Display" button.';
-
-    this.setupEventListeners();
 
     this.textRenderer = new TextRenderer(this.resultContainer, this.message);
-    this.selectionManager = new SelectionManager(this.resultContainer, this.message);
-    new DragAndDropManager(this.resultContainer, this.selectionManager, this.message);
+    this.selectionManager = new SelectionManager(this.message);
+    this.dragAndDropManager = new DragAndDropManager(this.selectionManager, this.message);
+
+    this.initializeMessage();
+    this.setupEventListeners();
+  }
+
+  initializeMessage() {
+    this.message.textContent = 'Enter text and click the "Display" button.';
   }
 
   setupEventListeners() {
