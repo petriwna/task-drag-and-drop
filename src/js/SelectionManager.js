@@ -1,11 +1,13 @@
 export class SelectionManager {
-  constructor(resultContainer) {
+  constructor(resultContainer, messageElement) {
     this.container = resultContainer;
 
     this.selectedLetters = [];
     this.selectionBox = null;
     this.startX = 0;
     this.startY = 0;
+
+    this.messageElement = messageElement;
 
     this.setupEventListeners();
   }
@@ -61,6 +63,9 @@ export class SelectionManager {
     if (this.selectionBox) {
       document.body.removeChild(this.selectionBox);
       this.selectionBox = null;
+    }
+    if (this.selectedLetters.length > 0) {
+      this.messageElement.textContent = 'Drag the symbols to the desired location.';
     }
   }
 

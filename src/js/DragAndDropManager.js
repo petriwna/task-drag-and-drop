@@ -1,9 +1,10 @@
 import { CursorManager } from './CursorManager';
 
 export class DragAndDropManager {
-  constructor(resultContainer, selectedLettersManager) {
+  constructor(resultContainer, selectedLettersManager, messageElement) {
     this.container = resultContainer;
     this.selectedLettersManager = selectedLettersManager;
+    this.messageElement = messageElement;
 
     this.draggedLetters = [];
     this.cursorManager = new CursorManager();
@@ -19,7 +20,10 @@ export class DragAndDropManager {
   }
 
   handleDragStart(event) {
-    if (!event.target.classList.contains('letter__selected')) return;
+    if (!event?.target?.classList?.contains('letter__selected')) {
+      this.messageElement.textContent =
+        'To select, press Ctrl (or Cmd on Mac) + click to multi-select or Ctrl (or Cmd on Mac) + drag to group select.';
+    }
 
     const selected = this.selectedLettersManager.getSelectedLetters();
 

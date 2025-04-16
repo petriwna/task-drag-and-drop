@@ -7,12 +7,14 @@ export class Main {
     this.button = document.querySelector('.button');
     this.textarea = document.querySelector('.input__control');
     this.resultContainer = document.querySelector('.result');
+    this.message = document.querySelector('.message__text');
+    this.message.textContent = 'Enter text and click the "Display" button.';
 
     this.setupEventListeners();
 
     this.textRenderer = new TextRenderer(this.resultContainer);
-    this.selectionManager = new SelectionManager(this.resultContainer);
-    new DragAndDropManager(this.resultContainer, this.selectionManager);
+    this.selectionManager = new SelectionManager(this.resultContainer, this.message);
+    new DragAndDropManager(this.resultContainer, this.selectionManager, this.message);
   }
 
   setupEventListeners() {
@@ -22,5 +24,7 @@ export class Main {
   handleButtonClick() {
     this.textRenderer.render(this.textarea.value);
     this.textarea.value = '';
+    this.message.textContent =
+      'Press Ctrl (or Cmd on Mac) + click to multi-select or Ctrl (or Cmd on Mac) + drag to group select.';
   }
 }
